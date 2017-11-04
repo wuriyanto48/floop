@@ -12,7 +12,7 @@ import (
 	"github.com/wuriyanto48/floop"
 )
 
-func pr() {
+func someFunc() {
 	res := mul(5, 5)
 	fmt.Println(res)
 }
@@ -23,6 +23,6 @@ func mul(a int, b int) int {
 
 func main() {
 	f := floop.New(1)
-	f.Start(pr)
+	f.Start(someFunc)
 }
 ```
