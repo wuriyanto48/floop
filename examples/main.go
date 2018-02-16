@@ -1,10 +1,3 @@
-**Floop**
-
-**When you need to execute function repeatedly**
-
-# Usage
-
-```go
 package main
 
 import (
@@ -24,10 +17,7 @@ func mul(a int, b int) int {
 }
 
 func main() {
-	
 	f := floop.New(1)
-	f.Start(someFunc, time.Second*3)
+	f.Start(someFunc, time.Second*5)
 
 }
-
-```

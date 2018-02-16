@@ -4,34 +4,39 @@ import (
 	"time"
 )
 
-type Floop struct {
-	tick *time.Ticker
-}
-
-func New(sch time.Duration) *Floop {
-	tick := time.NewTicker(time.Second * sch)
-	return &Floop{tick}
-}
-
+//fTask type function
 type fTask func()
 
-func (f *Floop) Start(task fTask) {
-	for {
-		<-f.exec(task)
-	}
+//floop
+type floop struct {
+	every time.Duration
 }
 
-func (f *Floop) Stop() {
-	f.tick.Stop()
+//New function, create pointer of floop
+func New(every time.Duration) *floop {
+	return &floop{every: every}
 }
 
-func (f *Floop) exec(task fTask) <-chan time.Time {
-	tr := make(chan time.Time)
+//Start function, execute function given to paramter and stop after duration > current time
+func (f *floop) Start(task fTask, duration time.Duration) {
+	stop := f.exec(task)
+	<-time.After(duration)
+	close(stop)
+}
+
+//exec function, execute function concurrently, after it stop
+func (f *floop) exec(task fTask) chan bool {
+	stop := make(chan bool, 1)
+	tick := time.NewTicker(time.Second * f.every)
 	go func() {
-		for t := range f.tick.C {
-			task()
-			tr <- t
+		for {
+			select {
+			case <-tick.C:
+				task()
+			case <-stop:
+				return
+			}
 		}
 	}()
-	return tr
+	return stop
 }
