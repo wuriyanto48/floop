@@ -30,6 +30,14 @@ func (f *floop) exec(task fTask) chan bool {
 	tick := time.NewTicker(time.Second * f.every)
 	go func() {
 		for {
+
+			// try-receive
+			select {
+			case <-stop:
+				return
+			default:
+			}
+
 			select {
 			case <-tick.C:
 				task()
